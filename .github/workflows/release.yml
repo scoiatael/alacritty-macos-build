@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  - push
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.8'
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+          default: true
+          override: true
+
+      - name: Build
+        run: make target/Alacritty.app
+
+      - name: Compress
+        run: tar czf Alacritty.tgz target/Alacritty.app -C target
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/Alacritty.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
