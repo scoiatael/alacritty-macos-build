@@ -1,0 +1,6 @@
+[submodule "alacritty"]
+	path = alacritty
+	url = https://github.com/alacritty/alacritty
+[submodule "appify"]
+	path = appify
+	url = https://github.com/scoiatael/appify
